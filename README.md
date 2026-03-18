@@ -18,6 +18,7 @@ Browse your music library in an interactive table, search and filter by artist, 
 git clone https://github.com/ataylor/cli-music-player.git
 cd cli-music-player
 make build
+make install
 ```
 
 ## Usage
