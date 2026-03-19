@@ -9,6 +9,7 @@ import (
 
 	"github.com/dhowden/tag"
 	"github.com/gopxl/beep/v2"
+	"github.com/gopxl/beep/v2/flac"
 	"github.com/gopxl/beep/v2/mp3"
 	"github.com/gopxl/beep/v2/vorbis"
 )
@@ -19,6 +20,7 @@ type AudioFormat int
 const (
 	FormatMP3 AudioFormat = iota
 	FormatOGG
+	FormatFLAC
 )
 
 func (f AudioFormat) String() string {
@@ -27,6 +29,8 @@ func (f AudioFormat) String() string {
 		return "MP3"
 	case FormatOGG:
 		return "OGG"
+	case FormatFLAC:
+		return "FLAC"
 	default:
 		return "Unknown"
 	}
@@ -68,6 +72,8 @@ func DetectFormat(path string) (AudioFormat, error) {
 		return FormatMP3, nil
 	case ".ogg":
 		return FormatOGG, nil
+	case ".flac":
+		return FormatFLAC, nil
 	default:
 		return 0, fmt.Errorf("unsupported format: %s", ext)
 	}
@@ -142,6 +148,8 @@ func readDuration(path string, format AudioFormat) time.Duration {
 		streamer, af, err = mp3.Decode(f)
 	case FormatOGG:
 		streamer, af, err = vorbis.Decode(f)
+	case FormatFLAC:
+		streamer, af, err = flac.Decode(f)
 	}
 	if err != nil || streamer == nil {
 		return 0

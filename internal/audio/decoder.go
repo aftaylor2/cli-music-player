@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/gopxl/beep/v2"
+	"github.com/gopxl/beep/v2/flac"
 	"github.com/gopxl/beep/v2/mp3"
 	"github.com/gopxl/beep/v2/vorbis"
 
@@ -28,6 +29,8 @@ func OpenDecoder(path string, format library.AudioFormat) (beep.StreamSeekCloser
 		streamer, af, err = mp3.Decode(f)
 	case library.FormatOGG:
 		streamer, af, err = vorbis.Decode(f)
+	case library.FormatFLAC:
+		streamer, af, err = flac.Decode(f)
 	default:
 		f.Close()
 		return nil, beep.Format{}, fmt.Errorf("unsupported audio format: %s", format)

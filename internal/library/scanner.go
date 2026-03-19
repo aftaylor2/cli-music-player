@@ -29,7 +29,7 @@ func ScanDirectory(root string) ([]Track, error) {
 		}
 
 		ext := strings.ToLower(filepath.Ext(path))
-		if ext != ".mp3" && ext != ".ogg" {
+		if ext != ".mp3" && ext != ".ogg" && ext != ".flac" {
 			return nil
 		}
 

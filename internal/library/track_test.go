@@ -18,7 +18,8 @@ func TestDetectFormat(t *testing.T) {
 		{"ogg lowercase", "song.ogg", FormatOGG, false},
 		{"ogg uppercase", "song.OGG", FormatOGG, false},
 		{"unsupported wav", "song.wav", 0, true},
-		{"unsupported flac", "song.flac", 0, true},
+		{"flac lowercase", "song.flac", FormatFLAC, false},
+		{"flac uppercase", "song.FLAC", FormatFLAC, false},
 		{"no extension", "song", 0, true},
 		{"path with dirs", "/home/user/music/song.mp3", FormatMP3, false},
 	}
@@ -90,5 +91,8 @@ func TestAudioFormatString(t *testing.T) {
 	}
 	if FormatOGG.String() != "OGG" {
 		t.Errorf("FormatOGG.String() = %q, want %q", FormatOGG.String(), "OGG")
+	}
+	if FormatFLAC.String() != "FLAC" {
+		t.Errorf("FormatFLAC.String() = %q, want %q", FormatFLAC.String(), "FLAC")
 	}
 }
