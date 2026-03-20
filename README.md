@@ -1,13 +1,14 @@
 # CLI Music Player
 
-A terminal-based music player for MP3 and OGG files, built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea).
+A terminal-based music player for MP3, OGG, and FLAC files, built with Go and [Bubble Tea](https://github.com/charmbracelet/bubbletea).
 
 Browse your music library in an interactive table, search and filter by artist, album, or genre, and control playback — all from the terminal.
 
 ## Prerequisites
 
 - Go 1.22+
-- ALSA development headers:
+- **macOS**: Works out of the box (uses CoreAudio)
+- **Linux**: ALSA development headers:
   - **Arch**: `sudo pacman -S alsa-lib`
   - **Debian/Ubuntu**: `sudo apt install libasound2-dev`
   - **Fedora**: `sudo dnf install alsa-lib-devel`
@@ -15,7 +16,7 @@ Browse your music library in an interactive table, search and filter by artist, 
 ## Install
 
 ```bash
-git clone https://github.com/ataylor/cli-music-player.git
+git clone https://github.com/aftaylor2/cli-music-player.git
 cd cli-music-player
 make build
 make install
@@ -33,23 +34,27 @@ make install
 
 ## Controls
 
-| Key | Action |
-|-----|--------|
-| `↑` / `↓` | Navigate track list |
-| `←` / `→` | Rewind / fast-forward 5 seconds |
-| `Enter` | Play selected track |
-| `Space` | Pause / resume |
-| `s` | Stop playback |
-| `n` / `p` | Next / previous track |
-| `/` | Search |
-| `Esc` | Exit search / go back |
-| `1` - `4` | Switch view: songs, artists, albums, genres |
-| `q` | Quit |
+| Key       | Action                                              |
+| --------- | --------------------------------------------------- |
+| `↑` / `↓` | Navigate track list                                 |
+| `←` / `→` | Rewind / fast-forward 5 seconds                     |
+| `Enter`   | Play selected track                                 |
+| `Space`   | Pause / resume                                      |
+| `s`       | Stop playback                                       |
+| `n` / `p` | Next / previous track                               |
+| `/`       | Search                                              |
+| `i`       | Track info & album art                              |
+| `f`       | Fetch artwork (in info popup, when no art embedded) |
+| `Esc`     | Exit search / go back / close popup                 |
+| `1` - `4` | Switch view: songs, artists, albums, genres         |
+| `q`       | Quit                                                |
 
 ## Features
 
-- Recursive directory scanning for `.mp3` and `.ogg` files
+- Recursive directory scanning for `.mp3`, `.ogg`, and `.flac` files
 - Metadata display: title, artist, album, genre, duration
+- Album art display with native image support (iTerm2, Kitty, WezTerm) and half-block fallback for other terminals
+- Fetch missing album art from MusicBrainz / Cover Art Archive
 - Real-time search across title, artist, and album
 - Browse by artist, album, or genre with drill-down navigation
 - Auto-advances to the next track when playback ends
