@@ -55,6 +55,11 @@ type Model struct {
 	// Visible tracks (filtered view)
 	visibleTracks []library.Track
 	trackIndex    int // index within visibleTracks of currently playing track (-1 if none)
+
+	// Info popup
+	showInfo     bool
+	fetchingArt  bool
+	fetchArtErr  string
 }
 
 // NewModel creates a new TUI model.
@@ -116,7 +121,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case trackDoneMsg:
 		return m, nil
 
+	case artFetchResult:
+		m.fetchingArt = false
+		if msg.err != nil {
+			m.fetchArtErr = msg.err.Error()
+		} else if track := m.getInfoTrack(); track != nil {
+			track.AlbumArt = msg.data
+			track.AlbumArtMIME = "image/jpeg"
+			m.fetchArtErr = ""
+		}
+		return m, nil
+
 	case tea.KeyMsg:
+		// If info popup is open, only i/Esc dismiss it.
+		if m.showInfo {
+			return m.handleInfoKey(msg)
+		}
 		// If searching, handle search input.
 		if m.searching {
 			return m.handleSearchKey(msg)
@@ -213,6 +233,13 @@ func (m Model) handleNormalKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.refreshVisibleTracks()
 		return m, nil
 
+	case key.Matches(msg, keys.Info):
+		track := m.getInfoTrack()
+		if track != nil {
+			m.showInfo = true
+		}
+		return m, nil
+
 	case key.Matches(msg, keys.Escape):
 		if m.drillGroup != "" {
 			m.drillGroup = ""
@@ -226,6 +253,57 @@ func (m Model) handleNormalKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.table, cmd = m.table.Update(msg)
 		return m, cmd
 	}
+}
+
+func (m Model) handleInfoKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch {
+	case key.Matches(msg, keys.Info), key.Matches(msg, keys.Escape):
+		m.showInfo = false
+		m.fetchingArt = false
+		m.fetchArtErr = ""
+		return m, nil
+
+	case key.Matches(msg, keys.FetchArt):
+		track := m.getInfoTrack()
+		if track != nil && len(track.AlbumArt) == 0 && !m.fetchingArt {
+			m.fetchingArt = true
+			m.fetchArtErr = ""
+			artist, album := track.Artist, track.Album
+			return m, func() tea.Msg {
+				data, err := fetchAlbumArt(artist, album)
+				return artFetchResult{data: data, err: err}
+			}
+		}
+	}
+	// Swallow all other keys while popup is open.
+	return m, nil
+}
+
+// getInfoTrack returns the track to show in the info popup: the currently
+// playing track if available, otherwise the highlighted table row track.
+func (m Model) getInfoTrack() *library.Track {
+	if m.trackIndex >= 0 && m.trackIndex < len(m.visibleTracks) {
+		return &m.visibleTracks[m.trackIndex]
+	}
+	return m.getHighlightedTrack()
+}
+
+func (m Model) getHighlightedTrack() *library.Track {
+	row := m.table.HighlightedRow()
+	if row.Data == nil {
+		return nil
+	}
+	// In grouped view without drill-down, there's no individual track.
+	if m.viewMode != ViewSongs && m.drillGroup == "" {
+		return nil
+	}
+	title, _ := row.Data[colKeyTitle].(string)
+	for i, t := range m.visibleTracks {
+		if t.Title == title {
+			return &m.visibleTracks[i]
+		}
+	}
+	return nil
 }
 
 func (m *Model) playSelected() (tea.Model, tea.Cmd) {
@@ -377,6 +455,11 @@ func sortedKeys(m map[string][]library.Track) []string {
 }
 
 func (m Model) View() string {
+	if m.showInfo {
+		track := m.getInfoTrack()
+		return renderInfoPopup(track, m.width, m.height, m.fetchingArt, m.fetchArtErr)
+	}
+
 	var header string
 	switch m.viewMode {
 	case ViewSongs:
@@ -418,7 +501,7 @@ func (m Model) View() string {
 	view += "\n"
 
 	helpStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("241"))
-	view += helpStyle.Render("↑↓ navigate  ←→ seek 5s  enter play  space pause  s stop  n/p next/prev  / search  1-4 views  q quit")
+	view += helpStyle.Render("↑↓ navigate  ←→ seek 5s  enter play  space pause  s stop  n/p next/prev  i info  / search  1-4 views  q quit")
 
 	return view
 }

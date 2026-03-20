@@ -21,6 +21,8 @@ type keyMap struct {
 	ViewGenre  key.Binding
 	SeekBack   key.Binding
 	SeekFwd    key.Binding
+	Info       key.Binding
+	FetchArt   key.Binding
 }
 
 var keys = keyMap{
@@ -95,5 +97,13 @@ var keys = keyMap{
 	SeekFwd: key.NewBinding(
 		key.WithKeys("right"),
 		key.WithHelp("→", "forward 5s"),
+	),
+	Info: key.NewBinding(
+		key.WithKeys("i"),
+		key.WithHelp("i", "track info"),
+	),
+	FetchArt: key.NewBinding(
+		key.WithKeys("f"),
+		key.WithHelp("f", "fetch artwork"),
 	),
 }

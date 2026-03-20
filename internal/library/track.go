@@ -38,14 +38,16 @@ func (f AudioFormat) String() string {
 
 // Track represents a single audio file with its metadata.
 type Track struct {
-	FilePath    string
-	Title       string
-	Artist      string
-	Album       string
-	Genre       string
-	TrackNumber int
-	Duration    time.Duration
-	Format      AudioFormat
+	FilePath     string
+	Title        string
+	Artist       string
+	Album        string
+	Genre        string
+	TrackNumber  int
+	Duration     time.Duration
+	Format       AudioFormat
+	AlbumArt     []byte
+	AlbumArtMIME string
 }
 
 // FormatDuration returns the track duration as "m:ss" or "h:mm:ss".
@@ -124,6 +126,11 @@ func NewTrackFromFile(path string) (Track, error) {
 		}
 		num, _ := m.Track()
 		t.TrackNumber = num
+
+		if pic := m.Picture(); pic != nil {
+			t.AlbumArt = pic.Data
+			t.AlbumArtMIME = pic.MIMEType
+		}
 	}
 	// If tag reading fails, we keep fallback values.
 
