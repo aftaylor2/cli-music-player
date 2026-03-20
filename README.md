@@ -4,6 +4,10 @@ A terminal-based music player for MP3, OGG, and FLAC files, built with Go and [B
 
 Browse your music library in an interactive table, search and filter by artist, album, or genre, and control playback — all from the terminal.
 
+![Player](https://storage.googleapis.com/ataylor-public/player/player.png)
+
+![Album Art & Metadata](https://storage.googleapis.com/ataylor-public/player/player-album-artwork.png)
+
 ## Prerequisites
 
 - Go 1.22+
