@@ -16,9 +16,9 @@ func decodeAlbumArt(data []byte) (image.Image, error) {
 	return img, err
 }
 
-// resizeImage performs nearest-neighbor downscale to targetWidth, preserving
-// aspect ratio. The returned image always has an even number of rows so that
-// half-block rendering pairs evenly.
+// resizeImage downscales img to targetWidth using area-average (box filter)
+// sampling for smooth results. Preserves aspect ratio and ensures an even row
+// count for half-block rendering.
 func resizeImage(img image.Image, targetWidth int) image.Image {
 	bounds := img.Bounds()
 	srcW := bounds.Dx()
@@ -27,10 +27,7 @@ func resizeImage(img image.Image, targetWidth int) image.Image {
 		return img
 	}
 
-	// Each character cell is roughly twice as tall as it is wide, so the
-	// target height in pixels should account for 2 pixels per row of text.
 	targetHeight := (targetWidth * srcH) / srcW
-	// Ensure even row count for half-block pairing.
 	if targetHeight%2 != 0 {
 		targetHeight++
 	}
@@ -40,10 +37,37 @@ func resizeImage(img image.Image, targetWidth int) image.Image {
 
 	dst := image.NewRGBA(image.Rect(0, 0, targetWidth, targetHeight))
 	for y := 0; y < targetHeight; y++ {
-		srcY := y * srcH / targetHeight
+		// Source row range that maps to this destination row.
+		sy0 := y * srcH / targetHeight
+		sy1 := (y + 1) * srcH / targetHeight
+		if sy1 == sy0 {
+			sy1 = sy0 + 1
+		}
 		for x := 0; x < targetWidth; x++ {
-			srcX := x * srcW / targetWidth
-			dst.Set(x, y, img.At(bounds.Min.X+srcX, bounds.Min.Y+srcY))
+			// Source column range that maps to this destination column.
+			sx0 := x * srcW / targetWidth
+			sx1 := (x + 1) * srcW / targetWidth
+			if sx1 == sx0 {
+				sx1 = sx0 + 1
+			}
+
+			// Average all source pixels in this box.
+			var rSum, gSum, bSum uint64
+			count := uint64((sx1 - sx0) * (sy1 - sy0))
+			for sy := sy0; sy < sy1; sy++ {
+				for sx := sx0; sx < sx1; sx++ {
+					r, g, b, _ := img.At(bounds.Min.X+sx, bounds.Min.Y+sy).RGBA()
+					rSum += uint64(r)
+					gSum += uint64(g)
+					bSum += uint64(b)
+				}
+			}
+			dst.Set(x, y, color.RGBA{
+				R: uint8(rSum / count >> 8),
+				G: uint8(gSum / count >> 8),
+				B: uint8(bSum / count >> 8),
+				A: 255,
+			})
 		}
 	}
 	return dst
