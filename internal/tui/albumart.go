@@ -47,6 +47,12 @@ func detectImageProtocol() imageProtocol {
 			return
 		}
 
+		// Ghostty supports the Kitty graphics protocol.
+		if termProgram == "ghostty" {
+			detectedProtocol = protoKitty
+			return
+		}
+
 		// iTerm2
 		if termProgram == "iTerm.app" || os.Getenv("LC_TERMINAL") == "iTerm2" {
 			detectedProtocol = protoITerm2

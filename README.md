@@ -57,7 +57,7 @@ make install
 
 - Recursive directory scanning for `.mp3`, `.ogg`, and `.flac` files
 - Metadata display: title, artist, album, genre, duration
-- Album art display with native image support (iTerm2, Kitty, WezTerm) and half-block fallback for other terminals
+- Album art display with native image support (iTerm2, Ghostty, Kitty, WezTerm) and half-block fallback for other terminals
 - Fetch missing album art from MusicBrainz / Cover Art Archive
 - Real-time search across title, artist, and album
 - Browse by artist, album, or genre with drill-down navigation
