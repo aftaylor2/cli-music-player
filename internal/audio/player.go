@@ -8,7 +8,7 @@ import (
 	"github.com/gopxl/beep/v2"
 	"github.com/gopxl/beep/v2/speaker"
 
-	"github.com/ataylor/cli-music-player/internal/library"
+	"github.com/aftaylor2/cli-music-player/internal/library"
 )
 
 // PlayStatus represents the current state of the audio player.

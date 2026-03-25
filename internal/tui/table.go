@@ -5,7 +5,7 @@ import (
 
 	"github.com/evertras/bubble-table/table"
 
-	"github.com/ataylor/cli-music-player/internal/library"
+	"github.com/aftaylor2/cli-music-player/internal/library"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 
-	"github.com/ataylor/cli-music-player/internal/library"
+	"github.com/aftaylor2/cli-music-player/internal/library"
 )
 
 var (

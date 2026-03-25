@@ -45,7 +45,7 @@ func searchMusicBrainz(artist, album string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "cli-music-player/1.0 (https://github.com/ataylor/cli-music-player)")
+	req.Header.Set("User-Agent", "cli-music-player/1.0 (https://github.com/aftaylor2/cli-music-player)")
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -78,7 +78,7 @@ func downloadCoverArt(mbid string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "cli-music-player/1.0 (https://github.com/ataylor/cli-music-player)")
+	req.Header.Set("User-Agent", "cli-music-player/1.0 (https://github.com/aftaylor2/cli-music-player)")
 
 	resp, err := httpClient.Do(req)
 	if err != nil {

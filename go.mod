@@ -1,4 +1,4 @@
-module github.com/ataylor/cli-music-player
+module github.com/aftaylor2/cli-music-player
 
 go 1.26.1
 

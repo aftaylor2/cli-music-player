@@ -6,9 +6,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/ataylor/cli-music-player/internal/audio"
-	"github.com/ataylor/cli-music-player/internal/library"
-	"github.com/ataylor/cli-music-player/internal/tui"
+	"github.com/aftaylor2/cli-music-player/internal/audio"
+	"github.com/aftaylor2/cli-music-player/internal/library"
+	"github.com/aftaylor2/cli-music-player/internal/tui"
 )
 
 func main() {

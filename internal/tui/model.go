@@ -9,8 +9,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/evertras/bubble-table/table"
 
-	"github.com/ataylor/cli-music-player/internal/audio"
-	"github.com/ataylor/cli-music-player/internal/library"
+	"github.com/aftaylor2/cli-music-player/internal/audio"
+	"github.com/aftaylor2/cli-music-player/internal/library"
 )
 
 var highlightStyle = lipgloss.NewStyle().
@@ -57,9 +57,9 @@ type Model struct {
 	trackIndex    int // index within visibleTracks of currently playing track (-1 if none)
 
 	// Info popup
-	showInfo     bool
-	fetchingArt  bool
-	fetchArtErr  string
+	showInfo    bool
+	fetchingArt bool
+	fetchArtErr string
 }
 
 // NewModel creates a new TUI model.

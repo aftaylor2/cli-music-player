@@ -9,7 +9,7 @@ import (
 	"github.com/gopxl/beep/v2/mp3"
 	"github.com/gopxl/beep/v2/vorbis"
 
-	"github.com/ataylor/cli-music-player/internal/library"
+	"github.com/aftaylor2/cli-music-player/internal/library"
 )
 
 // OpenDecoder opens an audio file and returns a decoded stream along with its
