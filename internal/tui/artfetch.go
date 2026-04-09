@@ -11,6 +11,8 @@ import (
 
 var httpClient = &http.Client{Timeout: 10 * time.Second}
 
+const userAgent = "cli-music-player/1.0 (https://github.com/aftaylor2/cli-music-player)"
+
 // artFetchResult holds the result of an album art fetch attempt.
 type artFetchResult struct {
 	data []byte
@@ -45,7 +47,7 @@ func searchMusicBrainz(artist, album string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("User-Agent", "cli-music-player/1.0 (https://github.com/aftaylor2/cli-music-player)")
+	req.Header.Set("User-Agent", userAgent)
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
@@ -78,7 +80,7 @@ func downloadCoverArt(mbid string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("User-Agent", "cli-music-player/1.0 (https://github.com/aftaylor2/cli-music-player)")
+	req.Header.Set("User-Agent", userAgent)
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
