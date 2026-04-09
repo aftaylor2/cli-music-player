@@ -101,7 +101,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
-		m.table = m.table.WithTargetWidth(msg.Width).WithPageSize(msg.Height - 6)
+		// Reserve space for: view header (1) + table column headers (1) + controls (1) + help (1) + newlines (2) + margin (1)
+		pageSize := msg.Height - 8
+		if pageSize < 1 {
+			pageSize = 1
+		}
+		m.table = m.table.WithTargetWidth(msg.Width).WithPageSize(pageSize)
 		return m, nil
 
 	case tickMsg:
