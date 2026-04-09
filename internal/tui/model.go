@@ -1,6 +1,7 @@
 package tui
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
@@ -81,6 +82,7 @@ func NewModel(lib *library.Library, player *audio.Player) Model {
 	}
 
 	m.table = m.table.WithRows(trackRows(tracks))
+	m.updateTableFooter(len(tracks))
 	return m
 }
 
@@ -107,6 +109,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			pageSize = 1
 		}
 		m.table = m.table.WithTargetWidth(msg.Width).WithPageSize(pageSize)
+		m.updateTableFooter(len(m.visibleTracks))
 		return m, nil
 
 	case tickMsg:
@@ -152,6 +155,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Forward to table.
 	var cmd tea.Cmd
 	m.table, cmd = m.table.Update(msg)
+	m.updateTableFooter(len(m.visibleTracks))
 	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
@@ -256,6 +260,7 @@ func (m Model) handleNormalKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	default:
 		var cmd tea.Cmd
 		m.table, cmd = m.table.Update(msg)
+		m.updateTableFooter(len(m.visibleTracks))
 		return m, cmd
 	}
 }
@@ -409,6 +414,7 @@ func (m *Model) refreshVisibleTracks() {
 
 	m.visibleTracks = tracks
 	m.table = m.table.WithRows(trackRows(tracks))
+	m.updateTableFooter(len(tracks))
 }
 
 func (m *Model) showGroupView() {
@@ -426,6 +432,7 @@ func (m *Model) showGroupView() {
 
 	m.groupKeys = sortedKeys(groups)
 	m.table = m.table.WithRows(groupRows(groups, m.groupKeys))
+	m.updateTableFooter(len(m.groupKeys))
 }
 
 func filterByGenre(lib *library.Library, genre string) []library.Track {
@@ -457,6 +464,26 @@ func sortedKeys(m map[string][]library.Track) []string {
 		}
 	}
 	return keys
+}
+
+// updateTableFooter sets the table footer to show the current range of results.
+func (m *Model) updateTableFooter(totalRows int) {
+	pageSize := m.table.PageSize()
+	currentPage := m.table.CurrentPage()
+
+	if totalRows == 0 || pageSize == 0 {
+		m.table = m.table.WithStaticFooter("")
+		return
+	}
+
+	start := (currentPage-1)*pageSize + 1
+	end := currentPage * pageSize
+	if end > totalRows {
+		end = totalRows
+	}
+
+	footer := fmt.Sprintf("%d-%d of %d", start, end, totalRows)
+	m.table = m.table.WithStaticFooter(footer)
 }
 
 func (m Model) View() string {
